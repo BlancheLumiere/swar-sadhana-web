@@ -1,0 +1,54 @@
+================================================================================
+PROJECT SUMMARY & WORK HISTORY: SWAR SADHANA WEB APPLICATION
+================================================================================
+
+PROJECT TITLE:
+Swar Sadhana — Indian Classical Music Academy Web Application
+
+TECH STACK IMPLEMENTED:
+- Frontend: React.js, Custom CSS3, JavaScript (ES6+), HTML5
+- Backend: Node.js, Express.js (RESTful API)
+- Database & Mailing: MongoDB (Mongoose Schema), Nodemailer
+- Tools & Build: npm, Create React App (react-scripts)
+
+================================================================================
+RESUME BULLET POINTS (STRICTLY WHAT IS IMPLEMENTED)
+================================================================================
+
+* Full-Stack Web Development: Developed a full-stack web portal for Swar Sadhana Indian Classical Music Academy using React.js for the frontend and Node.js/Express.js for the backend.
+* API & Lead Handling: Engineered a RESTful API (`POST /api/enquiry`) in Express with Mongoose to store student inquiry forms in MongoDB and send automated email alerts via Nodemailer.
+* Interactive Media & Audio Integration: Built a custom audio player component for playing classical dhun audio (`Omkaar Dhun`) alongside an auto-advancing hero image slider.
+* Event & Photo Gallery System: Developed dynamic event sections with popup detail modals, full-screen lightbox image viewers, and categorized photo galleries (Guru Purnima, Annual Concert, Festival Celebrations).
+* Responsive Custom Styling: Authored custom CSS with dark-mode aesthetic, IntersectionObserver scroll animations, gold accent typography, and fully responsive layouts for mobile and desktop screens.
+
+
+================================================================================
+VERIFIED IMPLEMENTED FEATURES BREAKDOWN
+================================================================================
+
+1. Frontend Architecture (React.js):
+   - Single Page Application with dynamic section navigation (Home, About, Courses, Student Life, Events, Recognition, Contact).
+   - IntersectionObserver custom hooks (`useSLFadeIn`) for scroll-triggered fade-in animations.
+   - Interactive Lightbox component for full-resolution image viewing.
+
+2. Audio Player & Hero Slider:
+   - Custom audio control interface for playing/pausing background Classical Audio (`Omkaar Dhun`).
+   - Automated 5-second slide transitions with manual next/prev controls.
+
+3. Student Life & Cultural Events Page:
+   - Rich story sections covering classroom learning, Riyaz practice, and student stage performances.
+   - Dedicated celebration grids for Guru Purnima, Ganesh Festival, and Independence Day.
+
+4. Event Showcase & Modal System:
+   - Past and upcoming event listings with category tags, dates, venues, and descriptions.
+   - Interactive modal popups displaying full event details and highlights.
+   - Dedicated event photo gallery viewer with navigation back to events list.
+
+5. Backend REST API & Database (Node.js / Express / MongoDB):
+   - Express server (`index.js`) running on port 5000 with CORS and JSON middleware.
+   - Mongoose `Enquiry` schema storing name, email, phone, and message with timestamps.
+   - Nodemailer integration configured to dispatch email notifications upon inquiry submission.
+
+6. Inquiry Contact Form Integration:
+   - React state-managed contact form sending async `fetch` requests to `/api/enquiry`.
+   - Real-time user feedback with error/success banners based on backend API responses.

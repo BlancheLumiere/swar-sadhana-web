@@ -1,0 +1,176 @@
+================================================================================
+SWAR SADHANA WEB APPLICATION — TECHNICAL SYSTEM ARCHITECTURE & HOW IT WORKS
+================================================================================
+
+TABLE OF CONTENTS:
+1. System Overview & Architecture
+2. Directory & File Structure
+3. Frontend Deep-Dive (React.js)
+4. Backend Deep-Dive (Node.js & Express.js)
+5. Database & Email Services (MongoDB & Nodemailer)
+6. Step-by-Step Data Flow (Enquiry Form Lifecycle)
+7. Styling, Animations & UI System
+8. How to Run & Build the Application
+
+================================================================================
+1. SYSTEM OVERVIEW & ARCHITECTURE
+================================================================================
+
+The Swar Sadhana Web Application is built as a Client-Server full-stack web application:
+
+[ Client (React SPA) ]  <--- HTTP / REST API (Port 5000) --->  [ Backend (Express Server) ]
+       |                                                               |
+  React State & UI                                         +-----------+-----------+
+  - Page Navigation                                        |                       |
+  - Audio Player                                      [ MongoDB ]            [ Nodemailer ]
+  - Lightbox / Modals                               (Database Storage)      (Email Transport)
+  - Interactive Galleries
+
+- Client: Single Page Application (SPA) built with React (v19) running on port 3000 during development.
+- Server: RESTful API built with Node.js & Express running on port 5000.
+- Database: MongoDB via Mongoose ORM for storing student inquiries.
+- Mail Service: Nodemailer transport service sending real-time notification emails to academy management.
+
+================================================================================
+2. DIRECTORY & FILE STRUCTURE
+================================================================================
+
+SWAR SADHANA WEB/
+├── client/                      # React Frontend Application
+│   ├── public/                  # Static public assets (HTML template, favicon)
+│   ├── src/
+│   │   ├── App.js               # Main React Application & Routing Component
+│   │   ├── styles.css           # Global Styling, Variables, Animations & Layouts
+│   │   ├── index.js             # React DOM Entry Point
+│   │   ├── Omkaar(Dhun)...mp3   # Audio file for Classical Dhun playback
+│   │   └── *.jpg / *.png        # Image assets (Hero slides, Guru Purnima, etc.)
+│   └── package.json             # Frontend dependencies & scripts ("proxy": "http://localhost:5000")
+│
+├── server/                      # Node.js / Express Backend Server
+│   ├── index.js                 # API Endpoints, MongoDB Connection & Nodemailer Config
+│   ├── package.json             # Server dependencies (express, mongoose, nodemailer, cors, dotenv)
+│   └── .env.example             # Environment variable template
+│
+└── PROJECT_SUMMARY.txt          # Summary of implemented features for work history
+
+================================================================================
+3. FRONTEND DEEP-DIVE (client/src/App.js & styles.css)
+================================================================================
+
+A. Navigation & Page Routing:
+   - The application acts as a Single Page Application using React state:
+     `const [currentPage, setCurrentPage] = useState("home");`
+   - Navigation links update `currentPage` to render views conditionally:
+     - "home"         -> Hero Slider, Academy Legacy, Founders, Quick Intro, Contact Section
+     - "student-life" -> Student Life & Riyaz Page (Classroom, Riyaz, Festival Grid, Lightbox)
+     - "events"       -> Upcoming Announcements, Past Events Grid, Event Modal & Event Galleries
+     - "courses"      -> Vocal Music Courses breakdown
+     - "recognition"  -> Bangiya Sangeet Parishad certifications & awards
+     - "contact"      -> Full Enquiry Form Section
+   - Navigation automatically scrolls to top on page change using a React `useEffect` hook.
+
+B. Interactive Hero Slider:
+   - State `activeSlide` tracks index (0, 1, 2) in `slidesData`.
+   - A 5-second `setInterval` automatically advances slides.
+   - Manual next/previous arrow buttons and slide dot indicators allow direct navigation.
+
+C. Audio Player Component:
+   - Utilizes React `useRef(null)` bound to an HTML5 `<audio>` element (`omAudio`).
+   - Toggling the audio button calls `.play()` or `.pause()` on the ref and updates `isAudioPlaying` state to switch play/pause icons.
+
+D. Scroll Animations (`useSLFadeIn` Custom Hook):
+   - Uses the browser's `IntersectionObserver` API to detect when sections enter the viewport.
+   - Dynamically adds the `.is-visible` CSS class to trigger CSS fade-in & slide-up transitions.
+
+E. Modals & Lightboxes:
+   - Lightbox state (`lightboxImg`): Displays an enlarged overlay image when clicking any photo in galleries.
+   - Event Modal state (`selectedEvent`): Opens a pop-up modal showing detailed event descriptions, date, time, venue, and bulleted highlights.
+   - Event Gallery State (`activeGalleryEvent`): Replaces the events list view with a dedicated grid of high-resolution photos for that specific event.
+
+================================================================================
+4. BACKEND DEEP-DIVE (server/index.js)
+================================================================================
+
+A. Server Setup & Middleware:
+   - Instantiates Express app on port `process.env.PORT || 5000`.
+   - Uses `cors()` to allow cross-origin requests from the React frontend.
+   - Uses `express.json()` to parse incoming JSON request payloads.
+
+B. Database Connection (MongoDB):
+   - Connects to MongoDB via Mongoose if `process.env.MONGO_URI` is present.
+   - Defines Mongoose schema `enquirySchema`:
+     ```javascript
+     {
+       name: String,
+       email: String,
+       phone: String,
+       message: String,
+       timestamps: true // Automatically adds createdAt and updatedAt
+     }
+     ```
+
+C. Email Service Configuration (Nodemailer):
+   - Reads `EMAIL_USER`, `EMAIL_PASS`, and `CONTACT_RECIPIENT` from environment variables.
+   - Creates Nodemailer SMTP transport service.
+   - If credentials are not set, logs a warning and degrades gracefully without crashing.
+
+D. REST API Endpoints:
+   1. GET `/`
+      - Health check endpoint returning plain text: `"Swar Sadhana API is running"`.
+
+   2. POST `/api/enquiry`
+      - Accepts JSON payload: `{ name, email, phone, message }`.
+      - Validates that `name`, `email`, and `message` are non-empty. Returns 400 Bad Request if validation fails.
+      - Saves enquiry record to MongoDB database via `Enquiry.create(...)`.
+      - Sends an automated notification email via `transporter.sendMail(...)` formatted with name, email, phone, and message body.
+      - Returns JSON `{ success: true }` to frontend.
+
+================================================================================
+5. STEP-BY-STEP DATA FLOW (ENQUIRY FORM LIFECYCLE)
+================================================================================
+
+Here is what happens when a user submits the Contact / Enquiry form:
+
+1. [USER ACTION]: User fills in Name, Email, Phone Number, Message and clicks "Send Message".
+2. [REACT STATE]: `handleFormSubmit` event handler in `App.js` fires.
+3. [VALIDATION]: React checks form inputs and sets status state: `setFormStatus({ type: "sending", message: "Sending..." })`.
+4. [HTTP REQUEST]: React executes `fetch("/api/enquiry", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData) })`.
+   - In development, CRA Proxy proxies `/api/enquiry` to `http://localhost:5000/api/enquiry`.
+5. [EXPRESS RECEIVE]: Server receives POST request at `/api/enquiry`.
+6. [DATABASE WRITE]: Express inserts document into MongoDB `enquiries` collection via Mongoose `Enquiry.create(...)`.
+7. [EMAIL TRIGGER]: Express calls `transporter.sendMail()` to deliver email notification to academy inbox.
+8. [HTTP RESPONSE]: Express responds with HTTP 200 JSON `{ success: true }`.
+9. [UI UPDATE]: React receives response, clears form input fields, and displays green success alert banner:
+   "Thank you for contacting Swar Sadhana! We have received your message and will get back to you soon."
+
+================================================================================
+6. STYLING & DESIGN SYSTEM (client/src/styles.css)
+================================================================================
+
+- Color Palette:
+  - Deep Navy / Obsidian background (`#050816`, `#0b1021`)
+  - Gold Accent & Warm Glow (`#d4af37`, `#f39c12`)
+  - Off-white readable typography (`#e2e8f0`, `#f8fafc`)
+- Design Elements:
+  - Glassmorphic card overlays (`backdrop-filter: blur()`, semi-transparent borders).
+  - CSS Grid layouts for image galleries (`repeat(auto-fit, minmax(...))`).
+  - Flexbox responsive navigation bars and modal contents.
+  - Hover micro-interactions (subtle scale up, image brightness shifts, gold border glows).
+
+================================================================================
+7. HOW TO RUN THE PROJECT LOCALLY
+================================================================================
+
+1. Start Backend Server:
+   - Navigate to `server/` directory: `cd server`
+   - Run: `npm start`
+   - Output: `Swar Sadhana server listening on port 5000`
+
+2. Start Frontend React Client:
+   - Navigate to `client/` directory: `cd client`
+   - Run: `npm start`
+   - Application opens automatically at `http://localhost:3000`
+
+3. Production Build:
+   - Inside `client/` directory, run: `npm run build`
+   - Optimized build generated in `client/build/`.

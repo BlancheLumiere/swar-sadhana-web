@@ -1,0 +1,14 @@
+{
+  "name": "swar-sadhana-web",
+  "version": "1.0.0",
+  "description": "Full-stack Web Application for Swar Sadhana Academy",
+  "main": "server/index.js",
+  "scripts": {
+    "install-all": "npm install --prefix server && npm install --prefix client",
+    "build": "npm run build --prefix client",
+    "start": "node server/index.js"
+  },
+  "keywords": ["swar-sadhana", "music", "academy"],
+  "author": "Swar Sadhana",
+  "license": "ISC"
+}
