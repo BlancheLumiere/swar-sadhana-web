@@ -413,9 +413,11 @@ function App() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [activeGalleryEvent, setActiveGalleryEvent] = useState(null);
   const [eventLightboxImg, setEventLightboxImg] = useState(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     setActiveGalleryEvent(null);
+    setIsMobileMenuOpen(false);
   }, [currentPage]);
 
   useEffect(() => {
@@ -577,33 +579,53 @@ function App() {
       />
 
       <header className="header">
-        <div className="logo-container" onClick={() => setCurrentPage("home")}>
+        <div className="logo-container" onClick={() => { setCurrentPage("home"); setIsMobileMenuOpen(false); }}>
           <img src={logoImg} alt="Swar Sadhana Logo" className="navbar-logo" />
           <span className="logo-text">Swar Sadhana</span>
         </div>
-        <nav className="nav-menu">
-          <button className={`nav-link ${currentPage === "home" ? "active" : ""}`} onClick={() => setCurrentPage("home")}>Home</button>
-          <button className={`nav-link ${currentPage === "student-life" ? "active" : ""}`} onClick={() => setCurrentPage("student-life")}>Student Life</button>
-          <button className={`nav-link ${currentPage === "events" ? "active" : ""}`} onClick={() => setCurrentPage("events")}>Events</button>
-          <button className={`nav-link ${currentPage === "recognition" ? "active" : ""}`} onClick={() => setCurrentPage("recognition")}>Recognition</button>
-          <button className={`nav-link ${currentPage === "publications" ? "active" : ""}`} onClick={() => setCurrentPage("publications")}>Publications</button>
-          <button className={`nav-link ${currentPage === "contact" ? "active" : ""}`} onClick={() => setCurrentPage("contact")}>Contact us</button>
+        <nav className={`nav-menu ${isMobileMenuOpen ? "mobile-open" : ""}`}>
+          <button className={`nav-link ${currentPage === "home" ? "active" : ""}`} onClick={() => { setCurrentPage("home"); setIsMobileMenuOpen(false); }}>Home</button>
+          <button className={`nav-link ${currentPage === "student-life" ? "active" : ""}`} onClick={() => { setCurrentPage("student-life"); setIsMobileMenuOpen(false); }}>Student Life</button>
+          <button className={`nav-link ${currentPage === "events" ? "active" : ""}`} onClick={() => { setCurrentPage("events"); setIsMobileMenuOpen(false); }}>Events</button>
+          <button className={`nav-link ${currentPage === "recognition" ? "active" : ""}`} onClick={() => { setCurrentPage("recognition"); setIsMobileMenuOpen(false); }}>Recognition</button>
+          <button className={`nav-link ${currentPage === "publications" ? "active" : ""}`} onClick={() => { setCurrentPage("publications"); setIsMobileMenuOpen(false); }}>Publications</button>
+          <button className={`nav-link ${currentPage === "contact" ? "active" : ""}`} onClick={() => { setCurrentPage("contact"); setIsMobileMenuOpen(false); }}>Contact us</button>
         </nav>
-        <button className="audio-toggle" onClick={handleAudioToggle} aria-label={isAudioPlaying ? "Mute audio" : "Play audio"}>
-          {isAudioPlaying ? (
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-              <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
-              <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-            </svg>
-          ) : (
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-              <line x1="23" y1="9" x2="17" y2="15" />
-              <line x1="17" y1="9" x2="23" y2="15" />
-            </svg>
-          )}
-        </button>
+        <div className="header-right-actions">
+          <button className="audio-toggle" onClick={handleAudioToggle} aria-label={isAudioPlaying ? "Mute audio" : "Play audio"}>
+            {isAudioPlaying ? (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+              </svg>
+            ) : (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                <line x1="23" y1="9" x2="17" y2="15" />
+                <line x1="17" y1="9" x2="23" y2="15" />
+              </svg>
+            )}
+          </button>
+          <button
+            className="mobile-hamburger-btn"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+          >
+            {isMobileMenuOpen ? (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            ) : (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            )}
+          </button>
+        </div>
       </header>
 
       <main>
